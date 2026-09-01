@@ -1,95 +1,83 @@
-import { Box, HStack } from '@chakra-ui/react';
 import Editor from '@monaco-editor/react';
 import { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import LanguageSelector from './LanguageSelector';
-import { CODE_SNIPPETS } from '../constants';
 import Output from './Output';
+import { CODE_SNIPPETS, FILENAMES } from '../constants';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { FileCode2 } from 'lucide-react';
+import { defineNeutralDarkTheme } from './monacoTheme';
 
-const CodeEditor = ({ handleToggleTheme, toggleTheme }) => {
-  const [value, setValue] = useState('');
+const CodeEditor = ({ isDark }) => {
+  const [value, setValue] = useState(() => CODE_SNIPPETS.javascript || '');
   const [language, setLanguage] = useState('javascript');
   const editorRef = useRef();
 
-  const onMount = (editor) => {
+  const onBeforeMount = (monaco) => {
+    defineNeutralDarkTheme(monaco);
+  };
+  const onMount = (editor, monaco) => {
     editorRef.current = editor;
+    if (isDark) {
+        monaco.editor.setTheme('neutral-dark');
+      }
     editor.focus();
   };
 
-  const onSelect = (language) => {
-    setLanguage(language);
-    setValue(CODE_SNIPPETS[language] || '');
-    1;
+  const onSelect = (next) => {
+    setLanguage(next);
+    setValue(CODE_SNIPPETS[next] || '');
   };
 
   return (
-    <Box>
-      <HStack
-        spacing={4}
-        flexDirection={{ base: 'column', md: 'row' }}
-        alignItems={'center'}
-      >
-        <Box width={{ base: '100%', md: '70%' }}>
-          <LanguageSelector
-            language={language}
-            onSelect={onSelect}
-            className="z-10 border-2 border-gray-500"
-            handleToggleTheme={handleToggleTheme}
-            toggleTheme={toggleTheme}
-          />
-          <div className="border-[1px] border-[#555555] rounded-lg p-2">
-            <div
-              className={`${
-                !toggleTheme ? 'bg-[#252525] border-b-[#555555]' : 'bg-gray-100'
-              }  border-b-2 `}
-            >
-              <h2
-                className={`h-full flex gap-1 ${
-                  !toggleTheme ? 'text-gray-100' : 'text-gray-500'
-                } items-center py-2 px-2 text-2xl tracking-widest font-medium`}
-              >
-                <FileCode2
-                  className={`w-8 h-8 ${
-                    !toggleTheme ? 'text-gray-100' : 'text-gray-500'
-                  }`}
-                />
-                Code Editor
-              </h2>
-            </div>
+    <div className="flex flex-col gap-4 lg:grid lg:min-h-0 lg:flex-1 lg:grid-cols-6 lg:items-stretch">
+      <Card size="sm" className="flex min-h-0 flex-col overflow-hidden lg:col-span-4 lg:h-full pb-0 gap-0">
+        <CardHeader className="shrink-0 flex flex-row items-center justify-between gap-2 border-b [.border-b]:pb-3">
+          <div className="flex items-center gap-2 font-mono text-sm text-muted-foreground">
+            <FileCode2 size={18} className="text-primary" />
+            <span>{FILENAMES[language]}</span>
+          </div>
+          <LanguageSelector language={language} onSelect={onSelect} />
+        </CardHeader>
+        <CardContent className="flex min-h-0 flex-1 flex-col p-0">
+          <div className="h-full w-full">
             <Editor
-              height="75vh"
-              theme={!toggleTheme ? 'vs-dark' : 'vs-light'}
+              height="100%"
+              theme={isDark ? 'neutral-dark' : 'vs-light'}
               language={language}
-              defaultValue={CODE_SNIPPETS[language] || ''}
               value={value}
-              onChange={(value) => setValue(value || '')}
+              onChange={(next) => setValue(next || '')}
+              beforeMount={onBeforeMount}
               onMount={onMount}
               options={{
-                padding: { top: 20, left: 10, right: 10, bottom: 20 },
+                padding: {
+                  top: 20,
+                  left: 10,
+                  right: 10,
+                  bottom: 20,
+                },
                 fontSize: 16,
                 fontFamily: 'Fira Code, Cascadia Code',
                 fontLigatures: true,
                 wordWrap: 'on',
                 scrollBeyondLastLine: false,
                 automaticLayout: true,
+                minimap: { enabled: false },
+                scrollbar: { verticalScrollbarSize: 10 },
               }}
             />
-          </div>
-        </Box>
 
-        <Output
-          editorRef={editorRef}
-          language={language}
-          toggleTheme={toggleTheme}
-        />
-      </HStack>
-    </Box>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Output editorRef={editorRef} language={language} />
+    </div>
   );
 };
+
 CodeEditor.propTypes = {
-  handleToggleTheme: PropTypes.func.isRequired,
-  toggleTheme: PropTypes.bool.isRequired,
+  isDark: PropTypes.bool.isRequired,
 };
 
 export default CodeEditor;

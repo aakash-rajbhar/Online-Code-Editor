@@ -5,11 +5,11 @@ import cpp from './assets/cpp.png';
 import python from './assets/python.png';
 
 export const LANGUAGE_VERSIONS = {
-  javascript: '18.15.0',
-  java: '15.0.2',
-  c: '10.2.0',
-  cpp: '10.2.0',
-  python: '3.10.0',
+  javascript: 63,
+  java: 62,
+  c: 50,
+  cpp: 54,
+  python: 71,
 };
 
 export const LANGUAGES = [
@@ -34,6 +34,14 @@ export const LANGUAGE_LOGO = {
   c: '../assets/c.png',
   cpp: '../assets/cpp.png',
   python: '../assets/python.png',
+};
+
+export const FILENAMES = {
+  javascript: 'main.js',
+  java: 'Main.java',
+  c: 'main.c',
+  cpp: 'main.cpp',
+  python: 'main.py',
 };
 
 export const CODE_SNIPPETS = {
