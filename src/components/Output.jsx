@@ -200,22 +200,7 @@ const Output = ({ editorRef, language }) => {
         </div>
       </CardContent>
 
-      <CardFooter className="justify-between gap-2 text-xs font-mono text-muted-foreground">
-        <span className="flex min-w-0 items-center gap-1.5 truncate">
-          <span
-            className={cn(
-              'size-1.5 shrink-0 rounded-full',
-              tone === 'success'
-                ? 'bg-success'
-                : tone === 'error'
-                  ? 'bg-destructive'
-                  : tone === 'warning'
-                    ? 'bg-warning'
-                    : 'bg-muted-foreground/40'
-            )}
-          />
-          {isRunning ? 'compiling…' : status ?? 'idle'}
-        </span>
+      <CardFooter className="justify-end gap-2 text-xs font-mono text-muted-foreground">
 
         <div className="flex shrink-0 items-center gap-4">
           <span className="flex items-center gap-1.5">
